@@ -9,13 +9,15 @@ class CharactersViewModel with ChangeNotifier {
 
   String error = '';
 
-  final repository = CharactersRepository();
+  final _repository = CharactersRepository();
 
   final listController = ScrollController();
 
   List<Character> filteredCharactersList = [];
 
   List<Character> fullCharactersList = [];
+
+  String? errorMessage = '';
 
   bool _showSearchBar = false;
 
@@ -41,11 +43,15 @@ class CharactersViewModel with ChangeNotifier {
 
   CharactersViewModel() {
     listController.addListener(loadNextPage);
-    listStreamSubscription = repository.charactersListStream.listen((onData) {
+    listStreamSubscription = _repository.charactersListStream.listen((onData) {
+      errorMessage = '';
       fullCharactersList.addAll(onData);
       _filterData();
     });
-    repository.fetchData();
+    _repository.fetchData().catchError((e) {
+      errorMessage = e.toString();
+      notifyListeners();
+    });
   }
 
   Future loadNextPage() async {
@@ -54,10 +60,15 @@ class CharactersViewModel with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    if (searchNameText.isEmpty &&
-        listController.position.pixels >=
-            listController.position.maxScrollExtent) {
-      await repository.fetchData();
+    if ((fullCharactersList.isEmpty) ||
+        (fullCharactersList.length <
+                (_repository.charactersResponse?.info?.count ?? 0) &&
+            listController.position.pixels >=
+                listController.position.maxScrollExtent)) {
+      await _repository.fetchData().catchError((e) {
+        errorMessage = e.toString();
+        notifyListeners();
+      });
     }
     isLoading = false;
     notifyListeners();
@@ -89,6 +100,17 @@ class CharactersViewModel with ChangeNotifier {
     }
 
     notifyListeners();
+
+    if (filteredCharactersList.length < 20) {
+      isLoading = true;
+      notifyListeners();
+      await _repository.fetchData().catchError((e) {
+        errorMessage = e.toString();
+        notifyListeners();
+      });
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   _filterData() {
@@ -115,8 +137,6 @@ class CharactersViewModel with ChangeNotifier {
     searchBarController.text = '';
     _filterData();
   }
-
-
 
   @override
   void dispose() {

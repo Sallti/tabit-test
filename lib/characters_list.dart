@@ -11,16 +11,18 @@ class CharactersList extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceType = getDeviceTypeAndOrientation(context);
 
-    return Consumer<CharactersViewModel>(builder: (context, data, child) {
+    return Consumer<CharactersViewModel>(
+        builder: (context, charactersViewModel, child) {
       return Stack(
         children: [
           ListView.builder(
-            controller: data.listController,
+            controller: charactersViewModel.listController,
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemCount: data.filteredCharactersList.length,
+            itemCount: charactersViewModel.filteredCharactersList.length,
             itemBuilder: (BuildContext context, int index) {
-              final character = data.filteredCharactersList[index];
+              final character =
+                  charactersViewModel.filteredCharactersList[index];
               return InkWell(
                 onTap: () => (deviceType == DeviceType.phonePortrait ||
                         deviceType == DeviceType.tabletPortrait)
@@ -34,7 +36,7 @@ class CharactersList extends StatelessWidget {
                               body: CharacterDetails(character)),
                         ),
                       )
-                    : data.setSelectedCharacter(character),
+                    : charactersViewModel.setSelectedCharacter(character),
                 child: Card(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -62,10 +64,10 @@ class CharactersList extends StatelessWidget {
               );
             },
           ),
-          if (data.isLoading)
+          if (charactersViewModel.isLoading)
             Center(
                 child: CircularProgressIndicator(
-              color: Colors.blue[300],
+              color: Colors.blueAccent,
             ))
         ],
       );
