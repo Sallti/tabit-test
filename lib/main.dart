@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'characters_view_model.dart';
 import 'home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<CharactersViewModel>(
+        create: (context) => CharactersViewModel()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

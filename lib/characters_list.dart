@@ -13,7 +13,7 @@ class CharactersList extends StatelessWidget {
 
     return Consumer<CharactersViewModel>(
         builder: (context, charactersViewModel, child) {
-      return Stack(
+          return Stack(
         children: [
           ListView.builder(
             controller: charactersViewModel.listController,

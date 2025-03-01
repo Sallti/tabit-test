@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:rick_and_morty/characters_repository.dart';
 import 'package:rick_and_morty/response_model.dart';
 
+enum Status { alive, dead, unknown }
+
 class CharactersViewModel with ChangeNotifier {
   bool isLoading = false;
 
@@ -24,6 +26,8 @@ class CharactersViewModel with ChangeNotifier {
   String searchNameText = '';
 
   Character? selectedCharacter;
+
+  List<Status> statusFilterList = [];
 
   final searchBarController = TextEditingController();
 
@@ -99,6 +103,7 @@ class CharactersViewModel with ChangeNotifier {
       }
     }
 
+    startFilter();
     notifyListeners();
 
     if (filteredCharactersList.length < 20) {
@@ -128,6 +133,8 @@ class CharactersViewModel with ChangeNotifier {
         }
       }
     }
+
+    startFilter();
     notifyListeners();
   }
 
@@ -142,5 +149,28 @@ class CharactersViewModel with ChangeNotifier {
   void dispose() {
     listStreamSubscription?.cancel();
     super.dispose();
+  }
+
+  setStatusFilter(bool selected, Status status) {
+    if (selected) {
+      statusFilterList.add(status);
+    } else {
+      statusFilterList.remove(status);
+    }
+    notifyListeners();
+  }
+
+  void clearStatusFilter() {
+    statusFilterList.clear();
+    _filterData();
+  }
+
+  void startFilter() {
+    if (statusFilterList.isEmpty) return;
+
+    filteredCharactersList.removeWhere((element) => !statusFilterList
+        .contains(Status.values.byName(element.status?.toLowerCase() ?? '')));
+
+    notifyListeners();
   }
 }
