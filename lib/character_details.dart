@@ -53,31 +53,33 @@ class CharacterDetails extends StatelessWidget {
                 deviceType == DeviceType.phonePortrait
             ? 20
             : 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (deviceType == DeviceType.tabletPortrait ||
-                deviceType == DeviceType.phonePortrait)
-              Text(
-                character.name ?? '',
-                style: TextStyle(
-                    fontSize: deviceType == DeviceType.tabletPortrait ||
-                            deviceType == DeviceType.phonePortrait
-                        ? 25
-                        : 19),
-              ),
-            SizedBox(height: 8),
-            Image.network(character.image ?? '',
-                fit: BoxFit.fill,
-                width: deviceType == DeviceType.phonePortrait
-                    ? 300
-                    : double.infinity),
-            _infoRow('Species', character.species ?? '', deviceType),
-            _infoRow('Origin', character.origin?.name ?? '', deviceType),
-            _infoRow('Gender', character.gender ?? '', deviceType),
-            _infoRow('Status', character.status ?? '', deviceType),
-            _infoRow('Location', character.location?.name ?? '', deviceType),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (deviceType == DeviceType.tabletPortrait ||
+                  deviceType == DeviceType.phonePortrait)
+                Text(
+                  character.name ?? '',
+                  style: TextStyle(
+                      fontSize: deviceType == DeviceType.tabletPortrait ||
+                              deviceType == DeviceType.phonePortrait
+                          ? 25
+                          : 19),
+                ),
+              SizedBox(height: 8),
+              Image.network(character.image ?? '',
+                  fit: BoxFit.fill,
+                  width: deviceType == DeviceType.phonePortrait
+                      ? 300
+                      : double.infinity),
+              _infoRow('Species', character.species ?? '', deviceType),
+              _infoRow('Origin', character.origin?.name ?? '', deviceType),
+              _infoRow('Gender', character.gender ?? '', deviceType),
+              _infoRow('Status', character.status ?? '', deviceType),
+              _infoRow('Location', character.location?.name ?? '', deviceType),
+            ],
+          ),
         ),
       );
     }
